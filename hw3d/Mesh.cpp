@@ -190,7 +190,7 @@ public:
 		assert( pSelectedNode != nullptr );
 		const auto& transform = transforms.at( pSelectedNode->GetId() );
 		return 
-			dx::XMMatrixRotationRollPitchYaw( transform.roll,transform.pitch,transform.yaw ) *
+			dx::XMMatrixRotationRollPitchYaw( transform.pitch,transform.yaw,transform.roll ) *
 			dx::XMMatrixTranslation( transform.x,transform.y,transform.z );
 	}
 	Node* GetSelectedNode() const noexcept
@@ -257,6 +257,11 @@ void Model::ShowWindow( Graphics& gfx,const char* windowName ) noexcept
 void Model::SetRootTransform( DirectX::FXMMATRIX tf ) noexcept
 {
 	pRoot->SetAppliedTransform( tf );
+}
+
+const DirectX::XMFLOAT4X4 & Model::GetAppliedRootTransform() const noexcept
+{
+	return pRoot->GetAppliedTransform();
 }
 
 Model::~Model() noexcept
