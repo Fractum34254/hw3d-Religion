@@ -55,7 +55,16 @@ App::App( const std::string& commandLine )
 		}
 	}
 
-	wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,400.0f ) );
+	//translate both atlas models and rotate the second one
+	const float yaw = PI;
+	const float delta_z = 5.0f;
+
+	models.at(0)->SetRootTransform(dx::XMMatrixTranslation(0.0f, 0.0f, delta_z));
+	models.at(1)->SetRootTransform(dx::XMMatrixTranslation(0.0f, 0.0f, delta_z));
+	models.at(1)->SetRootTransform(dx::XMLoadFloat4x4(&models.at(1)->GetAppliedRootTransform()) * dx::XMMatrixRotationRollPitchYaw(0.0f, yaw, 0.0f));
+
+
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 }
 
 void App::DoFrame()
@@ -66,7 +75,10 @@ void App::DoFrame()
 	light.Bind( wnd.Gfx(),cam.GetMatrix() );
 
 	light.Draw( wnd.Gfx() );
-	atlas.Draw( wnd.Gfx() );
+	for (int i = 0; i < (int)models.size(); i++)
+	{
+		models.at(i)->Draw(wnd.Gfx());
+	}
 
 	while( const auto e = wnd.kbd.ReadKey() )
 	{
@@ -135,7 +147,12 @@ void App::DoFrame()
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	ShowImguiDemoWindow();
-	atlas.ShowWindow(wnd.Gfx(), "Atlas");
+	for (int i = 0; i < (int)models.size(); i++)
+	{
+		std::string name = "Model ";
+		name += std::to_string(i);
+		models.at(i)->ShowWindow(wnd.Gfx(), name.c_str());
+	}
 
 	// present
 	wnd.Gfx().EndFrame();

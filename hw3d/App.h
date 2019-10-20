@@ -27,5 +27,7 @@ private:
 	float speed_factor = 1.0f;
 	Camera cam;
 	PointLight light;
-	Model atlas{ wnd.Gfx(),"G:\\Microsoft Visual Studio Repos\\hw3d\\hw3d\\Models\\atlas\\untitled.obj",1.0f / 20.0f };
+	Model atlas1{ wnd.Gfx(), "G:\\Microsoft Visual Studio Repos\\hw3d\\hw3d\\Models\\atlas\\untitled.obj", 1.0f / 20.0f };
+	Model atlas2{ wnd.Gfx(), "G:\\Microsoft Visual Studio Repos\\hw3d\\hw3d\\Models\\atlas\\untitled.obj", 1.0f / 20.0f };
+	std::vector<Model*> models{ &atlas1, &atlas2 };
 };
