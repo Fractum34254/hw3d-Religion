@@ -75,6 +75,13 @@ App::App( const std::string& commandLine )
 	objects.push_back(&bricks16);
 	objects.push_back(&bricks17);
 	objects.push_back(&bricks18);
+	objects.push_back(&bricks19);
+	objects.push_back(&bricks20);
+	objects.push_back(&bricks21);
+	objects.push_back(&bricks22);
+	objects.push_back(&bricks23);
+	objects.push_back(&bricks24);
+	objects.push_back(&bricks25);
 
 
 	//translate both atlas models and rotate the second one
