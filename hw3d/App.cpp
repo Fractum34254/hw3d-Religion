@@ -55,14 +55,60 @@ App::App( const std::string& commandLine )
 		}
 	}
 
+	//push back all object models in container
+	objects.push_back(&bricks0);
+	objects.push_back(&bricks1);
+	objects.push_back(&bricks2);
+	objects.push_back(&bricks3);
+	objects.push_back(&bricks4);
+	objects.push_back(&bricks5);
+	objects.push_back(&bricks6);
+	objects.push_back(&bricks7);
+	objects.push_back(&bricks8);
+	objects.push_back(&bricks9);
+	objects.push_back(&bricks10);
+	objects.push_back(&bricks11);
+	objects.push_back(&bricks12);
+	objects.push_back(&bricks13);
+	objects.push_back(&bricks14);
+	objects.push_back(&bricks15);
+	objects.push_back(&bricks16);
+	objects.push_back(&bricks17);
+	objects.push_back(&bricks18);
+
+
 	//translate both atlas models and rotate the second one
 	const float yaw = PI;
 	const float delta_z = 5.0f;
+	const float delta_y = -5.0f;
 
-	models.at(0)->SetRootTransform(dx::XMMatrixTranslation(0.0f, 0.0f, delta_z));
-	models.at(1)->SetRootTransform(dx::XMMatrixTranslation(0.0f, 0.0f, delta_z));
-	models.at(1)->SetRootTransform(dx::XMLoadFloat4x4(&models.at(1)->GetAppliedRootTransform()) * dx::XMMatrixRotationRollPitchYaw(0.0f, yaw, 0.0f));
+	atlas1.SetRootTransform(dx::XMMatrixTranslation(0.0f, delta_y, delta_z));
+	atlas2.SetRootTransform(dx::XMMatrixTranslation(0.0f, delta_y, delta_z) * dx::XMMatrixRotationRollPitchYaw(0.0f, yaw, 0.0f));
 
+	//get random translations for the pictures
+	///positions
+	std::uniform_real_distribution<float> rDist(minR, maxR);
+	std::uniform_real_distribution<float> ascDist(minAsc, maxAsc);
+	std::uniform_real_distribution<float> decDist(minDec, maxDec);
+	///velocities
+	std::normal_distribution<float> vel(meanV,stddevV);
+	std::uniform_int_distribution<int> sign(0, 1);
+
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		///position & orientation
+		const float r = rDist(rng);
+		const float asc = ascDist(rng);
+		const float dec = decDist(rng);
+
+		///velocity
+		const float uVAsc = std::clamp(vel(rng), minV, maxV);
+		const float vAsc = (sign(rng) == 1) ? (-uVAsc) : (uVAsc);
+		const float uVDec = std::clamp(vel(rng), minV, maxV);
+		const float vDec = (sign(rng) == 1) ? (-uVDec) : (uVDec);
+
+		objects.at(i)->Set(r, asc, dec, vAsc, vDec);
+	}
 
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 }
@@ -73,11 +119,17 @@ void App::DoFrame()
 	wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().SetCamera( cam.GetMatrix() );
 	light.Bind( wnd.Gfx(),cam.GetMatrix() );
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		objects.at(i)->Update(dt);
+	}
 
 	light.Draw( wnd.Gfx() );
-	for (int i = 0; i < (int)models.size(); i++)
+	atlas1.Draw(wnd.Gfx());
+	atlas2.Draw(wnd.Gfx());
+	for (int i = 0; i < (int)objects.size(); i++)
 	{
-		models.at(i)->Draw(wnd.Gfx());
+		objects.at(i)->m.Draw(wnd.Gfx());
 	}
 
 	while( const auto e = wnd.kbd.ReadKey() )
@@ -147,12 +199,6 @@ void App::DoFrame()
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	ShowImguiDemoWindow();
-	for (int i = 0; i < (int)models.size(); i++)
-	{
-		std::string name = "Model ";
-		name += std::to_string(i);
-		models.at(i)->ShowWindow(wnd.Gfx(), name.c_str());
-	}
 
 	// present
 	wnd.Gfx().EndFrame();
