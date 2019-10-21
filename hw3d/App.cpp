@@ -56,33 +56,34 @@ App::App( const std::string& commandLine )
 	}
 
 	//push back all object models in container
-	objects.push_back(&bricks0);
-	objects.push_back(&bricks1);
-	objects.push_back(&bricks2);
-	objects.push_back(&bricks3);
-	objects.push_back(&bricks4);
-	objects.push_back(&bricks5);
-	objects.push_back(&bricks6);
-	objects.push_back(&bricks7);
-	objects.push_back(&bricks8);
-	objects.push_back(&bricks9);
-	objects.push_back(&bricks10);
-	objects.push_back(&bricks11);
-	objects.push_back(&bricks12);
-	objects.push_back(&bricks13);
-	objects.push_back(&bricks14);
-	objects.push_back(&bricks15);
-	objects.push_back(&bricks16);
-	objects.push_back(&bricks17);
-	objects.push_back(&bricks18);
-	objects.push_back(&bricks19);
-	objects.push_back(&bricks20);
-	objects.push_back(&bricks21);
-	objects.push_back(&bricks22);
-	objects.push_back(&bricks23);
-	objects.push_back(&bricks24);
-	objects.push_back(&bricks25);
-	objects.push_back(&bricks26);
+	objects.push_back(&picture0);
+	objects.push_back(&picture1);
+	objects.push_back(&picture2);
+	objects.push_back(&picture3);
+	objects.push_back(&picture4);
+	objects.push_back(&picture5);
+	objects.push_back(&picture6);
+	objects.push_back(&picture7);
+	objects.push_back(&picture8);
+	objects.push_back(&picture9);
+	objects.push_back(&picture10);
+	objects.push_back(&picture11);
+	objects.push_back(&picture12);
+	objects.push_back(&picture13);
+	objects.push_back(&picture14);
+	objects.push_back(&picture15);
+	objects.push_back(&picture16);
+	objects.push_back(&picture17);
+	objects.push_back(&picture18);
+	objects.push_back(&picture19);
+	objects.push_back(&picture20);
+	objects.push_back(&picture21);
+	objects.push_back(&picture22);
+	objects.push_back(&picture23);
+	objects.push_back(&picture24);
+	objects.push_back(&picture25);
+	objects.push_back(&picture26);
+	objects.push_back(&picture27);
 
 
 	//translate both atlas models and rotate the second one
