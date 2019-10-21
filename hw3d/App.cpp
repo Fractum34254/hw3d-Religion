@@ -82,6 +82,7 @@ App::App( const std::string& commandLine )
 	objects.push_back(&bricks23);
 	objects.push_back(&bricks24);
 	objects.push_back(&bricks25);
+	objects.push_back(&bricks26);
 
 
 	//translate both atlas models and rotate the second one
@@ -97,9 +98,9 @@ App::App( const std::string& commandLine )
 	std::uniform_real_distribution<float> rDist(minR, maxR);
 	std::uniform_real_distribution<float> ascDist(minAsc, maxAsc);
 	std::uniform_real_distribution<float> decDist(minDec, maxDec);
+	std::uniform_real_distribution<float> radiansDist(minRadians, maxRadians);
 	///velocities
 	std::normal_distribution<float> vel(meanV,stddevV);
-	std::uniform_int_distribution<int> sign(0, 1);
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -109,15 +110,19 @@ App::App( const std::string& commandLine )
 		const float dec = decDist(rng);
 
 		///velocity
-		const float uVAsc = std::clamp(vel(rng), minV, maxV);
-		const float vAsc = (sign(rng) == 1) ? (-uVAsc) : (uVAsc);
-		const float uVDec = std::clamp(vel(rng), minV, maxV);
-		const float vDec = (sign(rng) == 1) ? (-uVDec) : (uVDec);
+		const float v = std::clamp(vel(rng), minV, maxV);
+		const float deltaAngle = radiansDist(rng);
+		const float vAsc = v * cos(deltaAngle);
+		const float vDec = v * sin(deltaAngle);
 
 		objects.at(i)->Set(r, asc, dec, vAsc, vDec);
 	}
 
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
+
+	//set standard to locked mouse
+	wnd.DisableCursor();
+	wnd.mouse.EnableRaw();
 }
 
 void App::DoFrame()
@@ -184,13 +189,13 @@ void App::DoFrame()
 		{
 			cam.Translate( { dt,0.0f,0.0f } );
 		}
-		if( wnd.kbd.KeyIsPressed( 'R' ) )
+		if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 		{
-			cam.Translate( { 0.0f,dt,0.0f } );
+			cam.TranslateInWorldSpace( { 0.0f,dt,0.0f } );
 		}
-		if( wnd.kbd.KeyIsPressed( 'F' ) )
+		if( wnd.kbd.KeyIsPressed( VK_CONTROL ) )
 		{
-			cam.Translate( { 0.0f,-dt,0.0f } );
+			cam.TranslateInWorldSpace( { 0.0f,-dt,0.0f } );
 		}
 	}
 
@@ -202,10 +207,13 @@ void App::DoFrame()
 		}
 	}
 		
-	// imgui windows
-	cam.SpawnControlWindow();
-	light.SpawnControlWindow();
-	ShowImguiDemoWindow();
+	if (wnd.CursorEnabled())
+	{
+		// imgui windows
+		cam.SpawnControlWindow();
+		light.SpawnControlWindow();
+		ShowImguiDemoWindow();
+	}
 
 	// present
 	wnd.Gfx().EndFrame();
