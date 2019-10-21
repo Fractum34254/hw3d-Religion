@@ -45,7 +45,7 @@ void PointLight::Reset() noexcept
 		1.0f,
 		1.0f,
 		0.0243f,
-		0.0002f,
+		0.004f,
 	};
 }
 
