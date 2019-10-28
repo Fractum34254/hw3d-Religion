@@ -121,6 +121,13 @@ App::App( const std::string& commandLine )
 
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 
+	//brownie
+	objects.push_back(&brownie);
+	std::uniform_real_distribution<float> rBrownieDist(100.0f, 110.0f); 
+	const float v = std::clamp(vel(rng), minV, maxV);
+	const float deltaAngle = radiansDist(rng);
+	objects.at(objects.size()-1)->Set(rBrownieDist(rng), ascDist(rng), decDist(rng), v * cos(deltaAngle), v * sin(deltaAngle));
+
 	//set standard to locked mouse
 	wnd.DisableCursor();
 	wnd.mouse.EnableRaw();
@@ -128,7 +135,8 @@ App::App( const std::string& commandLine )
 
 void App::DoFrame()
 {
-	const auto dt = timer.Mark() * speed_factor;
+	const auto rt = timer.Mark();
+	const auto dt = rt * speed_factor;
 	wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().SetCamera( cam.GetMatrix() );
 	light.Bind( wnd.Gfx(),cam.GetMatrix() );
@@ -169,34 +177,45 @@ void App::DoFrame()
 		case VK_F1:
 			showDemoWindow = true;
 			break;
+		case VK_RETURN:
+			if (speed_factor == 0.0f)
+			{
+				speed_factor = former_speed_factor;
+			}
+			else
+			{
+				former_speed_factor = speed_factor;
+				speed_factor = 0.0f;
+			}
 		}
 	}
 
 	if( !wnd.CursorEnabled() )
 	{
+		const auto et = dt > 0.0f ? dt : rt * former_speed_factor;
 		if( wnd.kbd.KeyIsPressed( 'W' ) )
 		{
-			cam.Translate( { 0.0f,0.0f,dt } );
+			cam.Translate( { 0.0f,0.0f,et } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'A' ) )
 		{
-			cam.Translate( { -dt,0.0f,0.0f } );
+			cam.Translate( { -et,0.0f,0.0f } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'S' ) )
 		{
-			cam.Translate( { 0.0f,0.0f,-dt } );
+			cam.Translate( { 0.0f,0.0f,-et } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'D' ) )
 		{
-			cam.Translate( { dt,0.0f,0.0f } );
+			cam.Translate( { et,0.0f,0.0f } );
 		}
 		if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 		{
-			cam.TranslateInWorldSpace( { 0.0f,dt,0.0f } );
+			cam.TranslateInWorldSpace( { 0.0f,et,0.0f } );
 		}
 		if( wnd.kbd.KeyIsPressed( VK_CONTROL ) )
 		{
-			cam.TranslateInWorldSpace( { 0.0f,-dt,0.0f } );
+			cam.TranslateInWorldSpace( { 0.0f,-et,0.0f } );
 		}
 	}
 

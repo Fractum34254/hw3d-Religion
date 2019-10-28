@@ -46,6 +46,7 @@ private:
 	//scene
 	ChiliTimer timer;
 	float speed_factor = 1.0f;
+	float former_speed_factor = speed_factor;
 	Camera cam;
 	PointLight light;
 	static constexpr float pictureScale = 6.0f;
@@ -79,5 +80,6 @@ private:
 	Object picture25{wnd.Gfx(), "Religion\\umwelt\\picture1.obj", pictureScale };
 	Object picture26{wnd.Gfx(), "Religion\\silas\\picture1.obj", pictureScale };
 	Object picture27{wnd.Gfx(), "Religion\\credits\\picture1.obj", pictureScale };
+	Object brownie{ wnd.Gfx(), "Religion\\brownie\\picture1.obj", pictureScale, true };
 	std::vector<Object*> objects;
 };

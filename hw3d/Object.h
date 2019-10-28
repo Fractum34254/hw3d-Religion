@@ -4,11 +4,12 @@
 class Object
 {
 public:
-	Object(Graphics& gfx, const std::string& pathString, float scale = 1.0f, float dAsc = 0.0f, float dDec = 0.0f)
+	Object(Graphics& gfx, const std::string& pathString, float scale = 1.0f, bool flipped = false, float dAsc = 0.0f, float dDec = 0.0f)
 		:
 		m(gfx, pathString, scale),
 		deltaAsc(dAsc),
-		deltaDec(dDec)
+		deltaDec(dDec),
+		flipped(flipped)
 	{}
 	void Set(float radius, float ascOrg, float decOrg, float dAsc, float dDec)
 	{
@@ -21,7 +22,8 @@ public:
 
 		xStart = r * cos(asc);
 		zStart = r * sin(asc);
-		const dx::XMMATRIX tf = dx::XMMatrixRotationY(PI / 2 - asc) * dx::XMMatrixTranslation(xStart, 0.0f, zStart) * dx::XMMatrixRotationAxis({ zStart, 0.0f, -xStart, 0.0f }, dec);
+		const float delta = flipped ? PI : 0.0f;
+		const dx::XMMATRIX tf = dx::XMMatrixRotationY(PI / 2 - asc + delta) * dx::XMMatrixTranslation(xStart, 0.0f, zStart) * dx::XMMatrixRotationAxis({ zStart, 0.0f, -xStart, 0.0f }, dec);
 		m.SetRootTransform(tf);
 	}
 	void Update(float dt)
@@ -31,7 +33,8 @@ public:
 		dec += deltaDec * dt;
 		const float x = r * cos(asc);
 		const float z = r * sin(asc);
-		const dx::XMMATRIX tf = dx::XMMatrixRotationY(PI / 2 - asc) * dx::XMMatrixTranslation(x, 0.0f, z) * dx::XMMatrixRotationAxis({ zStart, 0.0f, -xStart, 0.0f }, dec);
+		const float delta = flipped ? PI : 0.0f;
+		const dx::XMMATRIX tf = dx::XMMatrixRotationY(PI / 2 - asc + delta) * dx::XMMatrixTranslation(x, 0.0f, z) * dx::XMMatrixRotationAxis({ zStart, 0.0f, -xStart, 0.0f }, dec);
 		m.SetRootTransform(tf);
 	}
 public:
@@ -44,4 +47,5 @@ private:
 	float dec;
 	float deltaAsc;
 	float deltaDec;
+	bool flipped;
 };
